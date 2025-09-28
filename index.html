@@ -1,21 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Resume Optimizer MVP</title>
-  </head>
-  <body>
-    <h1>Resume Optimizer MVP</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Optimizer MVP</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; background: #f9f9f9; }
+    h1, h2 { color: #333; }
+    textarea { width: 100%; height: 120px; margin: 0.5rem 0; padding: 0.5rem; }
+    button { padding: 0.5rem 1rem; margin: 0.5rem 0; cursor: pointer; }
+    pre { background: #fff; padding: 1rem; border: 1px solid #ddd; overflow-x: auto; }
+    .section { margin-bottom: 2rem; padding: 1rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <h1>Resume Optimizer MVP</h1>
+
+  <!-- Test Backend -->
+  <div class="section">
+    <h2>Test Backend</h2>
     <button id="testBtn">Test Backend</button>
     <p id="result"></p>
+  </div>
 
-    <script>
-      document.getElementById('testBtn').addEventListener('click', async () => {
-        const res = await fetch('/api/hello');
-        const data = await res.json();
-        document.getElementById('result').innerText = data.message;
+  <!-- Resume Parser -->
+  <div class="section">
+    <h2>Resume Parser</h2>
+    <textarea id="resumeInput" placeholder="Paste resume text here..."></textarea>
+    <button onclick="parseResume()">Parse Resume</button>
+    <pre id="resumeResult"></pre>
+  </div>
+
+  <!-- Job Parser -->
+  <div class="section">
+    <h2>Job Parser</h2>
+    <textarea id="jobInput" placeholder="Paste job description here..."></textarea>
+    <button onclick="parseJob()">Parse Job</button>
+    <pre id="jobResult"></pre>
+  </div>
+
+  <script>
+    // Test backend
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const res = await fetch('/api/hello');
+      const data = await res.json();
+      document.getElementById('result').innerText = data.message;
+    });
+
+    // Parse Resume
+    async function parseResume() {
+      const text = document.getElementById("resumeInput").value;
+      const response = await fetch("/.netlify/functions/parseResume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
       });
-    </script>
-  </body>
+      const result = await response.json();
+      document.getElementById("resumeResult").textContent = JSON.stringify(result, null, 2);
+    }
+
+    // Parse Job
+    async function parseJob() {
+      const text = document.getElementById("jobInput").value;
+      const response = await fetch("/.netlify/functions/parseJob", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      const result = await response.json();
+      document.getElementById("jobResult").textContent = JSON.stringify(result, null, 2);
+    }
+  </script>
+</body>
 </html>
