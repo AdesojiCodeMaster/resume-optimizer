@@ -1,5 +1,3 @@
-const fetch = require("node-fetch");
-
 exports.handler = async (event, context) => {
   try {
     const { resumeText } = JSON.parse(event.body);
@@ -11,7 +9,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Call HuggingFace NER model
+    // HuggingFace NER call using built-in fetch
     const response = await fetch(
       "https://api-inference.huggingface.co/models/dslim/bert-base-NER",
       {
@@ -37,4 +35,4 @@ exports.handler = async (event, context) => {
     };
   }
 };
-        
+    
