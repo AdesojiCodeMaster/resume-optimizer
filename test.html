@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Job Parser</title>
+</head>
+<body>
+  <h2>Test Job Parser</h2>
+  <textarea id="jobInput" rows="6" cols="50" placeholder="Paste job description here..."></textarea><br>
+  <button onclick="testJob()">Parse Job</button>
+  
+  <h2>Result</h2>
+  <pre id="output"></pre>
+
+  <script>
+    async function testJob() {
+      const jobDescription = document.getElementById("jobInput").value;
+      const res = await fetch("/.netlify/functions/parseJob", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobDescription }),
+      });
+      const data = await res.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+  </html>
+  
