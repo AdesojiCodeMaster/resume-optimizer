@@ -5,72 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Resume Optimizer MVP</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; background: #f9f9f9; }
-    h1, h2 { color: #333; }
-    textarea { width: 100%; height: 120px; margin: 0.5rem 0; padding: 0.5rem; }
-    button { padding: 0.5rem 1rem; margin: 0.5rem 0; cursor: pointer; }
-    pre { background: #fff; padding: 1rem; border: 1px solid #ddd; overflow-x: auto; }
-    .section { margin-bottom: 2rem; padding: 1rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      width: 45%;
+      min-width: 300px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      resize: vertical;
+    }
+    button {
+      padding: 10px 20px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .results {
+      margin-top: 15px;
+    }
+    .result-card {
+      background: #f1f5f9;
+      border-left: 5px solid #2563eb;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+    .score {
+      font-size: 0.9em;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <h1>Resume Optimizer MVP</h1>
 
-  <!-- Test Backend -->
-  <div class="section">
-    <h2>Test Backend</h2>
-    <button id="testBtn">Test Backend</button>
-    <p id="result"></p>
-  </div>
+  <div class="container">
+    <!-- Resume Parser -->
+    <div class="card">
+      <h2>Resume Parser</h2>
+      <textarea id="resumeText" placeholder="Paste resume text here..."></textarea>
+      <button onclick="parseResume()">Parse Resume</button>
+      <div id="resumeResults" class="results"></div>
+    </div>
 
-  <!-- Resume Parser -->
-  <div class="section">
-    <h2>Resume Parser</h2>
-    <textarea id="resumeInput" placeholder="Paste resume text here..."></textarea>
-    <button onclick="parseResume()">Parse Resume</button>
-    <pre id="resumeResult"></pre>
-  </div>
+    <!-- Job Parser -->
+    <div class="card">
+      <h2>Job Parser</h2>
+      <textarea id="jobText" placeholder="Paste job description here..."></textarea>
+      <button onclick="parseJob()">Parse Job</button>
+      <div id="jobResults" class="results"></div>
+    </div>
 
-  <!-- Job Parser -->
-  <div class="section">
-    <h2>Job Parser</h2>
-    <textarea id="jobInput" placeholder="Paste job description here..."></textarea>
-    <button onclick="parseJob()">Parse Job</button>
-    <pre id="jobResult"></pre>
+    <!-- Resume Optimizer -->
+    <div class="card" style="width: 100%;">
+      <h2>Resume Optimizer</h2>
+      <textarea id="optResumeText" placeholder="Paste resume text here..."></textarea>
+      <textarea id="optJobText" placeholder="Paste job description here..."></textarea>
+      <button onclick="optimizeResume()">Optimize Resume</button>
+      <div id="optResults" class="results"></div>
+    </div>
   </div>
 
   <script>
-    // Test backend
-    document.getElementById('testBtn').addEventListener('click', async () => {
-      const res = await fetch('/api/hello');
-      const data = await res.json();
-      document.getElementById('result').innerText = data.message;
-    });
-
-    // Parse Resume
     async function parseResume() {
-      const resumeText = document.getElementById("resumeInput").value;
-      const response = await fetch("/.netlify/functions/parseResume", {
+      const text = document.getElementById("resumeText").value;
+      const res = await fetch("/api/parseResume", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeText })   // ✅ matches backend
+        body: JSON.stringify({ resumeText: text }),
       });
-      const result = await response.json();
-      document.getElementById("resumeResult").textContent = JSON.stringify(result, null, 2);
+      const data = await res.json();
+      displayResults("resumeResults", data);
     }
 
-    // Parse Job
     async function parseJob() {
-      const jobDescription = document.getElementById("jobInput").value;
-      const response = await fetch("/.netlify/functions/parseJob", {
+      const text = document.getElementById("jobText").value;
+      const res = await fetch("/api/parseJob", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobDescription })   // ✅ matches backend
-      });
-      const result = await response.json();
-      document.getElementById("jobResult").textContent = JSON.stringify(result, null, 2);
-    }
-  </script>
-</body>
-</html>
+        headers: { "Content-Type": "application/json
+    
 
