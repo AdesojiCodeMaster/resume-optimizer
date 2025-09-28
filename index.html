@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,6 +114,59 @@
       const text = document.getElementById("jobText").value;
       const res = await fetch("/api/parseJob", {
         method: "POST",
-        headers: { "Content-Type": "application/json
-    
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobDescription: text }),
+      });
+      const data = await res.json();
+      displayResults("jobResults", data);
+    }
 
+    async function optimizeResume() {
+      const resumeText = document.getElementById("optResumeText").value;
+      const jobText = document.getElementById("optJobText").value;
+      const res = await fetch("/api/optimizeResume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resumeText, jobDescription: jobText }),
+      });
+      const data = await res.json();
+
+      const container = document.getElementById("optResults");
+      container.innerHTML = "";
+
+      if (data.error) {
+        container.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="result-card">
+          <strong>Match Score:</strong> ${data.matchScore}%<br>
+          <strong>Matched Skills:</strong> ${data.matched.join(", ") || "None"}<br>
+          <strong>Missing Skills:</strong> ${data.missing.join(", ") || "None"}
+        </div>
+      `;
+    }
+
+    function displayResults(containerId, data) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      if (!Array.isArray(data)) {
+        container.innerHTML = `<p style="color:red;">Error: ${data.error || "Unknown error"}</p>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "result-card";
+        div.innerHTML = `
+          <strong>Keyword:</strong> ${item.word} <br>
+          <span class="score">Entity: ${item.entity_group} | Confidence: ${(item.score * 100).toFixed(1)}%</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
