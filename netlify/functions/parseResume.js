@@ -53,7 +53,9 @@ Return JSON only. Example:
 `;
 
     // Pick an instruction-capable model available on Hugging Face. If you want another model, replace below.
-    const modelUrl = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct";
+    const modelUrl =
+  "https://api-inference.huggingface.co/models/google/flan-t5-large";
+    
     
 
     const hfResponse = await fetch(modelUrl, {
