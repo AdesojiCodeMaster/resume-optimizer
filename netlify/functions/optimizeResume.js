@@ -19,7 +19,7 @@ export async function handler(event) {
 
   try {
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/your-model-here",
+      "https://api-inference.huggingface.co/models/gpt2",
       {
         method: "POST",
         headers: {
