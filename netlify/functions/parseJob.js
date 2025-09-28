@@ -1,17 +1,15 @@
-// netlify/functions/parseJob.js
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
-exports.handler = async function (event) {
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method not allowed, use POST" }),
+    };
+  }
+
   try {
-    if (event.httpMethod !== "POST") {
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed, use POST" }),
-      };
-    }
-
     const { jobDescription } = JSON.parse(event.body);
-
     if (!jobDescription) {
       return {
         statusCode: 400,
@@ -19,13 +17,15 @@ exports.handler = async function (event) {
       };
     }
 
-    // Call HuggingFace API (replace with your chosen model)
+    const HF_API_KEY = process.env.HF_API_KEY;
+    const model = "dslim/bert-base-NER"; // ✅ make sure this is correct
+
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/distilbert-base-uncased",
+      `https://api-inference.huggingface.co/models/${model}`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.HF_API_KEY}`,
+          Authorization: `Bearer ${HF_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ inputs: jobDescription }),
@@ -34,17 +34,16 @@ exports.handler = async function (event) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`HF API error: ${errorText}`);
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({ error: `HF API error: ${errorText}` }),
+      };
     }
 
-    const data = await response.json();
-
+    const result = await response.json();
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        message: "Job description parsed successfully",
-        data,
-      }),
+      body: JSON.stringify(result),
     };
   } catch (err) {
     return {
@@ -52,5 +51,4 @@ exports.handler = async function (event) {
       body: JSON.stringify({ error: err.message }),
     };
   }
-};
-          
+}
