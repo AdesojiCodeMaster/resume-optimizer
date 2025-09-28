@@ -1,7 +1,23 @@
 {
-  "name": "node-starter",
-  "private": true,
+  "name": "resume-optimizer",
+  "version": "1.0.0",
+  "description": "Resume Optimizer MVP - Netlify Functions + HuggingFace API",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "netlify dev",
+    "build": "echo 'Nothing to build for static frontend'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "resume",
+    "optimizer",
+    "job-matching",
+    "netlify",
+    "huggingface"
+  ],
+  "author": "Adesoji",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
   }
 }
