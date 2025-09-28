@@ -49,11 +49,11 @@
 
     // Parse Resume
     async function parseResume() {
-      const text = document.getElementById("resumeInput").value;
+      const resumeText = document.getElementById("resumeInput").value;
       const response = await fetch("/.netlify/functions/parseResume", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ resumeText })   // ✅ matches backend
       });
       const result = await response.json();
       document.getElementById("resumeResult").textContent = JSON.stringify(result, null, 2);
@@ -61,11 +61,11 @@
 
     // Parse Job
     async function parseJob() {
-      const text = document.getElementById("jobInput").value;
+      const jobDescription = document.getElementById("jobInput").value;
       const response = await fetch("/.netlify/functions/parseJob", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ jobDescription })   // ✅ matches backend
       });
       const result = await response.json();
       document.getElementById("jobResult").textContent = JSON.stringify(result, null, 2);
@@ -73,3 +73,4 @@
   </script>
 </body>
 </html>
+
