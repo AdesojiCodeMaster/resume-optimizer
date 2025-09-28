@@ -1,38 +1,56 @@
-exports.handler = async (event, context) => {
-  try {
-    const { jobText } = JSON.parse(event.body);
+// netlify/functions/parseJob.js
+const fetch = require("node-fetch");
 
-    if (!jobText) {
+exports.handler = async function (event) {
+  try {
+    if (event.httpMethod !== "POST") {
       return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Missing jobText" }),
+        statusCode: 405,
+        body: JSON.stringify({ error: "Method not allowed, use POST" }),
       };
     }
 
-    // Call HuggingFace NER model
+    const { jobDescription } = JSON.parse(event.body);
+
+    if (!jobDescription) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Missing jobDescription" }),
+      };
+    }
+
+    // Call HuggingFace API (replace with your chosen model)
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/dslim/bert-base-NER",
+      "https://api-inference.huggingface.co/models/distilbert-base-uncased",
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${process.env.HF_API_KEY}`,
+          Authorization: `Bearer ${process.env.HF_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ inputs: jobText }),
+        body: JSON.stringify({ inputs: jobDescription }),
       }
     );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HF API error: ${errorText}`);
+    }
 
     const data = await response.json();
 
     return {
       statusCode: 200,
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        message: "Job description parsed successfully",
+        data,
+      }),
     };
-  } catch (error) {
+  } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      body: JSON.stringify({ error: err.message }),
     };
   }
 };
-  
+          
